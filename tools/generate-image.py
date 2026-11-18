@@ -300,31 +300,47 @@ def pic(kind, x, y, w, h):
             d.ellipse([jx - 2, jy - 2, jx + 2, jy + 2], fill=(40, 40, 44))
     elif kind == "summit":
         # a meeting room, like the reference: pale wall, a purple banner
-        # on top, four flags standing on a brown conference table
+        # on top, four flags standing on a wide conference table
         vgrad(x, y, w, h, (232, 226, 240), (214, 206, 226))
+        # wall panelling behind the flags, and a rail below the labels
+        for px in (x + 70, x + 150, x + 230):
+            d.line([(px, y + 16), (px, y + 48)], fill=(198, 190, 212), width=1)
+        d.line([(x, y + 48), (x + w, y + 48)], fill=(198, 190, 212), width=1)
         banner = "QUAD LEADERS' SUMMIT · MANILA"
         bf = font(SANSB, 10)
         d.rectangle([x, y, x + w, y + 15], fill=(106, 74, 158))
         d.text(((x + x + w - d.textlength(banner, font=bf)) / 2, y + 2), banner, font=bf,
                fill=(255, 255, 255))
-        # brown table along the very bottom, with a polished top edge
-        d.rectangle([x, y + h - 6, x + w, y + h], fill=(122, 82, 52))
-        d.rectangle([x, y + h - 6, x + w, y + h - 3], fill=(168, 122, 84))
+        # a wide table: polished top surface, then the front face, so
+        # the flags stand on a real table instead of a thin strip
+        ty = y + h - 24
+        d.rectangle([x, ty, x + w, y + h], fill=(122, 82, 52))
+        d.rectangle([x, ty, x + w, ty + 4], fill=(168, 122, 84))
+        d.rectangle([x, ty + 14, x + w, y + h], fill=(100, 66, 42))
+        d.line([(x, ty + 14), (x + w, ty + 14)], fill=(80, 52, 32), width=1)
         fw = (w - 32) // 4
         for i, (fk, lab) in enumerate([("us", "USA"), ("india", "INDIA"), ("jp", "JAPAN"), ("australia", "AUSTRALIA")]):
             fx = x + 8 + i * (fw + 4)
             # a thin pole and a soft shadow where the flag meets the table
-            d.line([(fx + fw // 2, y + 17), (fx + fw // 2, y + h - 6)], fill=(90, 70, 50), width=1)
-            flag(fk, fx, y + 18, fw, 22)
-            d.text((fx, y + 41), lab, font=font(SANSB, 8), fill=NAVY)
-        # microphones in front of two of the flags, and a row of
-        # critical-minerals gems on the table, for the deals in the dek
-        for mx0 in (x + 40, x + w - 52):
-            d.line([(mx0, y + h - 6), (mx0 + 4, y + h - 18)], fill=(40, 40, 44), width=2)
-            d.ellipse([mx0 + 1, y + h - 21, mx0 + 7, y + h - 15], fill=(40, 40, 44))
-        for gx, gy, gc in [(x + w // 2 - 22, y + h - 12, (80, 200, 220)),
-                           (x + w // 2, y + h - 12, (120, 220, 160)),
-                           (x + w // 2 + 22, y + h - 12, (200, 180, 90))]:
+            d.line([(fx + fw // 2, y + 17), (fx + fw // 2, ty)], fill=(90, 70, 50), width=1)
+            flag(fk, fx, y + 18, fw, 20)
+            d.text((fx, y + 39), lab, font=font(SANSB, 8), fill=NAVY)
+        # place settings on the table top: a paper, a glass and a mic
+        # in front of each flag, so the table reads as a working summit
+        for i in range(4):
+            fx = x + 8 + i * (fw + 4)
+            cx0 = fx + 6
+            d.rectangle([cx0, ty + 5, cx0 + 26, ty + 12], fill=(255, 255, 255), outline=(150, 140, 120), width=1)
+            d.line([(cx0 + 3, ty + 8), (cx0 + 23, ty + 8)], fill=(160, 160, 160), width=1)
+            d.line([(cx0 + 3, ty + 10), (cx0 + 18, ty + 10)], fill=(180, 180, 180), width=1)
+            d.rectangle([cx0 + 32, ty + 4, cx0 + 40, ty + 12], fill=(190, 215, 230), outline=NAVY, width=1)
+            d.line([(cx0 + 32, ty + 7), (cx0 + 40, ty + 7)], fill=(255, 255, 255), width=1)
+            d.line([(cx0 + 48, ty + 12), (cx0 + 52, ty + 2)], fill=(40, 40, 44), width=2)
+            d.ellipse([cx0 + 49, ty - 1, cx0 + 55, ty + 5], fill=(40, 40, 44))
+        # critical-minerals gems on the table front, centre
+        for gx, gy, gc in [(x + w // 2 - 22, ty + 18, (80, 200, 220)),
+                           (x + w // 2, ty + 18, (120, 220, 160)),
+                           (x + w // 2 + 22, ty + 18, (200, 180, 90))]:
             d.polygon([(gx, gy - 5), (gx + 6, gy), (gx, gy + 5), (gx - 6, gy)], fill=gc,
                       outline=NAVY, width=1)
     elif kind == "truck":
@@ -421,6 +437,22 @@ def pic(kind, x, y, w, h):
         d.text((x + w // 2 + 13, y + 14), "KIGALI", font=font(SANSB, 7), fill=(255, 255, 255))
         d.ellipse([x + w - 40, y + h - 22, x + w - 14, y + h - 12], fill=(120, 185, 215))
         d.arc([x + w - 40, y + h - 22, x + w - 14, y + h - 12], 180, 360, fill=(220, 240, 250), width=1)
+        # a winding dirt road up to Kigali, a small village of houses
+        # with red roofs at the foot of the hills, terraced fields,
+        # more trees and birds — the green map now has life in it
+        d.line([(x + 66, y + h - 5), (x + 88, y + h - 11), (x + w // 2 - 2, y + h - 12)],
+               fill=(170, 130, 90), width=2)
+        for hx, hy in [(x + 10, y + h - 22), (x + 30, y + h - 26), (x + 48, y + h - 20)]:
+            d.rectangle([hx, hy, hx + 12, hy + 8], fill=(240, 230, 200), outline=(120, 100, 70), width=1)
+            d.polygon([(hx - 2, hy), (hx + 6, hy - 6), (hx + 14, hy)], fill=(178, 60, 40))
+        for ty_ in (y + 22, y + 28, y + 34):
+            d.arc([x + w - 70, ty_ - 4, x + w - 10, ty_ + 4], 180, 360, fill=(90, 150, 85), width=1)
+        for tx, ty in [(x + 90, y + 44), (x + 170, y + 40), (x + 120, y + 48)]:
+            d.polygon([(tx, ty), (tx + 4, ty - 8), (tx + 8, ty)], fill=(40, 110, 60))
+        for bx_, by_ in [(x + w - 30, y + 8), (x + w - 44, y + 12)]:
+            d.arc([bx_ - 4, by_ - 3, bx_, by_ + 3], 180, 360, fill=(70, 70, 70), width=1)
+            d.arc([bx_, by_ - 3, bx_ + 4, by_ + 3], 180, 360, fill=(70, 70, 70), width=1)
+        d.text((x + 64, y + h - 13), "LAKE KIVU", font=font(SANSB, 7), fill=(40, 90, 120))
         # pilot size, from the dek: about 100 people. Drawn last so the
         # map shape and its shadow never cover the tag.
         d.rectangle([x + w - 62, y + h - 18, x + w - 6, y + h - 4], fill=(255, 255, 255), outline=NAVY, width=1)
@@ -439,6 +471,13 @@ def pic(kind, x, y, w, h):
         vgrad(x, y + 28, w, h - 28, (190, 200, 130), (150, 170, 95))
         for gx in range(x + 6, x + w - 6, 14):
             d.line([(gx, y + h - 6), (gx + 3, y + h - 12)], fill=(110, 140, 70), width=1)
+        # wildflowers on the steppe, and birds in the sky
+        for fx_, fy_, fc in [(x + 152, y + h - 10, (220, 90, 90)), (x + 168, y + h - 8, (240, 200, 80)),
+                             (x + 180, y + h - 12, (255, 255, 255))]:
+            d.ellipse([fx_, fy_, fx_ + 4, fy_ + 4], fill=fc)
+        for bx_, by_ in [(x + 80, y + 10), (x + 96, y + 6)]:
+            d.arc([bx_ - 4, by_ - 3, bx_, by_ + 3], 180, 360, fill=(70, 70, 70), width=1)
+            d.arc([bx_, by_ - 3, bx_ + 4, by_ + 3], 180, 360, fill=(70, 70, 70), width=1)
         flag("mongolia", x + 8, y + 6, 56, 32)
         # the ger (yurt): domed roof with a shaded side, red door, cast shadow
         d.ellipse([x + w // 2 - 52, y + h - 10, x + w // 2 + 52, y + h - 4], fill=(120, 140, 75))
@@ -505,6 +544,13 @@ def pic(kind, x, y, w, h):
             d.rectangle([x + w // 2 - 28, wy, x + w // 2 - 22, wy + 4], fill=(150, 190, 220))
             d.rectangle([x + w // 2 + 22, wy, x + w // 2 + 28, wy + 4], fill=(150, 190, 220))
         flag("congo", x + 8, y + 6, 56, 32)
+        # two small trees and a fence along the clinic yard, left side
+        for tx, ty in [(x + 14, y + h - 22), (x + 34, y + h - 24)]:
+            d.polygon([(tx, ty), (tx + 5, ty - 10), (tx + 10, ty)], fill=(60, 130, 70))
+            d.rectangle([tx + 4, ty, tx + 6, ty + 12], fill=(120, 90, 60))
+        for fx_ in range(x + 8, x + 60, 12):
+            d.line([(fx_, y + h - 12), (fx_, y + h - 6)], fill=(150, 120, 90), width=1)
+        d.line([(x + 8, y + h - 9), (x + 60, y + h - 9)], fill=(150, 120, 90), width=1)
         # the case count from the headline, as a tag top-right
         d.rectangle([x + w - 72, y + 6, x + w - 6, y + 20], fill=(255, 255, 255), outline=RED, width=1)
         d.text((x + w - 68, y + 8), "11,000+", font=font(SANSB, 9), fill=RED)
@@ -524,6 +570,12 @@ def pic(kind, x, y, w, h):
         d.rectangle([x + w // 2 - 22, y + h - 22, x + w // 2 + 22, y + h - 19], fill=(150, 115, 82))
         d.ellipse([x + w // 2 - 8, y + h - 30, x + w // 2 + 8, y + h - 22], fill=(240, 220, 190))
         flag("turkiye", x + 8, y + 6, 56, 32)
+        # a conference screen on the wall between the flag and the
+        # globe, a red carpet on the floor, and delegates in front
+        d.rectangle([x + 76, y + 6, x + w - 62, y + 34], fill=(30, 60, 90), outline=NAVY, width=1)
+        d.text((x + 82, y + 9), "COP31", font=font(SANSB, 11), fill=(255, 255, 255))
+        d.text((x + 82, y + 22), "ANTALYA", font=font(SANSB, 7), fill=(170, 210, 230))
+        d.rectangle([x + 40, y + h - 10, x + w - 40, y + h], fill=(150, 50, 45))
         # globe: ocean gradient, green land arcs, a bright highlight —
         # bigger now, filling the right half of the panel
         gx0, gy0 = x + w - 58, y + 2
@@ -573,8 +625,20 @@ def pic(kind, x, y, w, h):
         # a snowy Siberian forest at dusk: grey-blue sky, pines, snow, smoke
         vgrad(x, y, w, h, (196, 206, 220), (228, 232, 238))
         cloud(x + 40, y + 8, 9, (200, 210, 222))
+        cloud(x + 120, y + 6, 8, (200, 210, 222))
+        # falling snow over the whole scene
+        for sx, sy in [(x + 80, y + 8), (x + 120, y + 14), (x + 150, y + 6), (x + 60, y + 18),
+                       (x + 100, y + 22), (x + 170, y + 20)]:
+            d.ellipse([sx, sy, sx + 2, sy + 2], fill=(255, 255, 255))
+        # snow-capped mountains along the horizon, behind the forest
+        d.polygon([(x, y + h - 16), (x + 30, y + h - 34), (x + 60, y + h - 16)], fill=(150, 165, 185))
+        d.polygon([(x + 22, y + h - 30), (x + 30, y + h - 34), (x + 38, y + h - 30)], fill=(240, 242, 246))
+        d.polygon([(x + w - 90, y + h - 16), (x + w - 55, y + h - 36), (x + w - 20, y + h - 16)], fill=(140, 155, 175))
+        d.polygon([(x + w - 63, y + h - 32), (x + w - 55, y + h - 36), (x + w - 47, y + h - 32)], fill=(240, 242, 246))
+        d.polygon([(x + w // 2 - 40, y + h - 16), (x + w // 2, y + h - 30), (x + w // 2 + 40, y + h - 16)], fill=(160, 175, 195))
         # pine trees along the back, snow-capped, in two depths
-        for tx, th in [(x + 6, 22), (x + 26, 28), (x + 48, 20), (x + w - 58, 24), (x + w - 38, 28)]:
+        for tx, th in [(x + 6, 22), (x + 26, 28), (x + 48, 20), (x + w - 58, 24), (x + w - 38, 28),
+                       (x + 88, 18), (x + 108, 22), (x + w - 110, 20), (x + w - 70, 18)]:
             d.polygon([(tx, y + h - 14), (tx + 8, y + h - 14 - th), (tx + 16, y + h - 14)],
                       fill=(36, 80, 52))
             d.polygon([(tx + 4, y + h - 14 - th + 6), (tx + 8, y + h - 14 - th), (tx + 12, y + h - 14 - th + 6)],
@@ -601,6 +665,11 @@ def pic(kind, x, y, w, h):
         soft_disc(x + w - 26, y + h - 20, 13, 9, (255, 170, 60), (220, 224, 232), steps=4)
         soft_disc(x + w - 26, y + h - 22, 7, 5, (255, 220, 120), (220, 224, 232), steps=3)
         d.polygon([(x + w - 32, y + h - 16), (x + w - 24, y + h - 32), (x + w - 16, y + h - 16)], fill=(220, 90, 30))
+        # debris scattered on the snow around the impact, and a smoke
+        # trail from the plane back to the fire
+        for dx_, dy_ in [(x + w - 60, y + h - 8), (x + w - 70, y + h - 12), (x + w - 44, y + h - 6)]:
+            d.rectangle([dx_, dy_, dx_ + 6, dy_ + 3], fill=(40, 40, 44))
+        d.line([(x + w - 40, y + h // 2 + 2), (x + w - 28, y + h - 18)], fill=(150, 150, 155), width=1)
     elif kind == "scales":
         # a courthouse in Maputo: warm sky, a columned facade, shaded steps
         vgrad(x, y, w, h, (236, 228, 208), (214, 200, 172))
@@ -755,7 +824,7 @@ LAND = [
     ([(-79, 9), (-77, 4), (-80, -3), (-81, -6), (-77, -12), (-72, -18), (-70, -23), (-70, -30), (-72, -37), (-73, -44), (-70, -50), (-68, -55), (-65, -55), (-62, -48), (-58, -38), (-52, -32), (-48, -28), (-41, -23), (-35, -9), (-35, -6), (-44, -3), (-50, 0), (-53, 4), (-58, 6), (-62, 9), (-70, 11), (-75, 10)], "S. AMERICA", -60, -14),
     ([(-10, 36), (-9, 43), (-2, 44), (-1, 46), (-4, 48), (-1, 50), (2, 51), (5, 53), (8, 57), (10, 59), (5, 60), (5, 62), (12, 65), (18, 69), (25, 71), (30, 70), (35, 68), (40, 68), (45, 65), (48, 60), (45, 55), (40, 50), (38, 46), (32, 46), (28, 45), (23, 40), (26, 38), (23, 36), (19, 40), (15, 44), (12, 44), (8, 44), (3, 42), (-9, 37)], "EUROPE", -28, 52),
     ([(-5, 50), (-3, 53), (-5, 56), (-3, 58), (-1, 57), (0, 53)], None, None, None),
-    ([(-17, 15), (-16, 20), (-13, 27), (-10, 31), (-6, 35), (0, 36), (10, 37), (11, 34), (20, 32), (25, 32), (30, 31), (32, 31), (35, 28), (37, 22), (39, 18), (43, 12), (48, 11), (51, 10), (46, 5), (41, 0), (40, -5), (40, -10), (36, -18), (33, -26), (28, -33), (20, -35), (17, -32), (15, -27), (12, -18), (13, -12), (9, -1), (9, 4), (-8, 4), (-13, 8), (-17, 12)], "AFRICA", -25, 0),
+    ([(-17, 15), (-16, 20), (-13, 27), (-10, 31), (-6, 35), (0, 36), (10, 37), (11, 34), (20, 32), (25, 32), (30, 31), (32, 31), (35, 28), (37, 22), (39, 18), (43, 12), (48, 11), (51, 10), (46, 5), (41, 0), (40, -5), (40, -10), (36, -18), (33, -26), (28, -33), (20, -35), (17, -32), (15, -27), (12, -18), (13, -12), (9, -1), (9, 4), (-8, 4), (-13, 8), (-17, 12)], "AFRICA", 38, -8),
     ([(44, -16), (47, -15), (50, -16), (49, -20), (45, -25), (43, -22)], None, None, None),
     ([(30, 70), (40, 68), (50, 69), (60, 69), (70, 72), (80, 73), (90, 75), (100, 77), (110, 74), (120, 73), (130, 72), (140, 72), (150, 70), (160, 69), (170, 67), (178, 65), (170, 60), (162, 56), (158, 52), (150, 59), (142, 54), (140, 48), (135, 43), (130, 42), (127, 40), (122, 38), (120, 32), (122, 28), (118, 25), (110, 21), (108, 18), (105, 10), (103, 8), (100, 7), (98, 12), (95, 16), (92, 21), (88, 22), (85, 19), (80, 15), (77, 8), (75, 12), (72, 20), (68, 23), (66, 25), (62, 25), (58, 26), (56, 27), (52, 26), (50, 29), (48, 30), (44, 29), (42, 27), (40, 24), (38, 22), (35, 28), (34, 31), (36, 36), (30, 36), (27, 38), (28, 41), (30, 45), (28, 46), (30, 48), (30, 60)], "ASIA", 95, 70),
     ([(130, 31), (133, 33), (136, 34), (139, 35), (141, 38), (142, 41), (144, 44), (142, 44), (140, 40), (137, 35), (133, 32)], None, None, None),
@@ -771,9 +840,9 @@ for olab, olon, olat in [("ATLANTIC", -42, 8), ("PACIFIC", -150, -12), ("INDIAN"
 # numbered pins: (lon, lat, label dx, label dy) — clustered pins get a
 # leader line from their true spot to a spread-out numbered circle
 PINS = {1: (37, 45, 0, -34), 2: (50.5, 26, 40, -6), 3: (121, 14.5, 0, 0),
-        4: (34.5, 31.5, 38, 22), 5: (130.5, 33.6, 0, 0), 6: (30, -2, -28, 20),
-        7: (107, 48, 26, -20), 8: (-74, 41, 0, 0), 9: (29.5, 1.5, -30, -14),
-        10: (30.7, 36.9, -40, 8), 11: (20.5, 44.8, -48, -28),
+        4: (34.5, 31.5, 38, 22), 5: (130.5, 33.6, 0, 0), 6: (30, -2, -28, 34),
+        7: (107, 48, 26, -20), 8: (-74, 41, 0, 0), 9: (29.5, 1.5, -70, 10),
+        10: (30.7, 36.9, -58, -6), 11: (20.5, 44.8, -30, -42),
         12: (86, 55.3, -30, 18), 13: (32.6, -26, 0, 0)}
 PINCOL = {1: BLUE, 2: CRIMSON, 3: CRIMSON, 4: CRIMSON, 5: CRIMSON, 6: BLUE, 7: CRIMSON, 8: PURPLE,
           9: GREEN, 10: TEAL, 11: BLUE, 12: CRIMSON, 13: GREEN}
