@@ -22,14 +22,14 @@ SERIF = "/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf"
 
 NAVY = (19, 33, 61)
 PAPER = (246, 240, 221)
-INK = (20, 20, 20)
-RED = (178, 34, 34)
-GREY = (100, 100, 100)
-BLUE = (43, 94, 167)
-CRIMSON = (179, 64, 46)
-GREEN = (46, 125, 79)
-PURPLE = (106, 74, 158)
-TEAL = (29, 122, 140)
+INK = (0, 0, 0)
+RED = (170, 28, 28)
+GREY = (70, 70, 70)
+BLUE = (30, 80, 160)
+CRIMSON = (168, 48, 32)
+GREEN = (34, 112, 68)
+PURPLE = (92, 58, 148)
+TEAL = (18, 108, 128)
 SLATE = (52, 58, 64)
 
 def font(path, size):
@@ -192,16 +192,16 @@ vgrad(0, 0, W, H, (248, 243, 226), (236, 227, 203))
 d.rectangle([5, 5, W - 6, H - 6], outline=NAVY, width=2)
 
 # ---------- header ----------
-d.text((16, 14), "THE WORLD'S NEWS IN ONE PICTURE", font=font(SANSB, 15), fill=RED)
+d.text((16, 12), "THE WORLD'S NEWS IN ONE PICTURE", font=font(SANSB, 16), fill=RED)
 right = "43 STORIES  ·  6 CONTINENTS  ·  ALL FROM THIS ONE DAY"
-d.text((W - 16 - d.textlength(right, font=font(SANSB, 15)), 14), right,
-       font=font(SANSB, 15), fill=GREY)
+d.text((W - 16 - d.textlength(right, font=font(SANSB, 16)), 12), right,
+       font=font(SANSB, 16), fill=GREY)
 # ---------- giant date ----------
 title = "Tuesday 17 November 2026"
-tw = d.textlength(title, font=font(SERIFB, 56))
-d.text(((W - tw) / 2, 40), title, font=font(SERIFB, 56), fill=INK)
-d.line([16, 112, W - 16, 112], fill=INK, width=3)
-d.line([16, 117, W - 16, 117], fill=INK, width=1)
+tw = d.textlength(title, font=font(SERIFB, 60))
+d.text(((W - tw) / 2, 36), title, font=font(SERIFB, 60), fill=INK)
+d.line([16, 110, W - 16, 110], fill=INK, width=3)
+d.line([16, 115, W - 16, 115], fill=INK, width=1)
 
 # ---------- pictograms ----------
 def pic(kind, x, y, w, h):
@@ -611,47 +611,53 @@ def light(col):
 
 def draw_panel(x, y, w, h, p, large):
     num, cat, col, head, dek, cap, kind = p
-    pic_h = 52 if large else 44
-    strip_h = 15 if large else 13
+    # taller, edge-to-edge illustration: the picture fills the card like
+    # the reference, instead of a small icon floating in white space
+    pic_h = 74 if large else 60
+    strip_h = 17 if large else 16
     # soft drop shadow so the card lifts off the paper
-    d.rounded_rectangle([x + 3, y + 3, x + w + 3, y + h + 3], radius=6, fill=(208, 198, 178))
-    d.rounded_rectangle([x, y, x + w, y + h], radius=6, fill=(255, 255, 255), outline=NAVY, width=2)
-    pic(kind, x + 6, y + 6, w - 12, pic_h)
-    sy = y + 6 + pic_h
-    d.rectangle([x + 6, sy, x + w - 6, sy + strip_h], fill=light(col))
-    d.text((x + 10, sy + 2), cap, font=font(SANSB, 10 if large else 9), fill=NAVY)
-    cy = sy + strip_h + 6
+    d.rounded_rectangle([x + 2, y + 2, x + w + 2, y + h + 2], radius=4, fill=(190, 180, 160))
+    d.rounded_rectangle([x, y, x + w, y + h], radius=4, fill=(255, 255, 255), outline=NAVY, width=2)
+    pic(kind, x + 2, y + 2, w - 4, pic_h)
+    # solid coloured caption band at the foot of the illustration,
+    # white caps on the region colour (the reference's look)
+    sy = y + 2 + pic_h
+    d.rectangle([x + 2, sy, x + w - 2, sy + strip_h], fill=col)
+    d.text((x + 10, sy + 2), cap, font=font(SANSB, 10 if large else 9), fill=(255, 255, 255))
+    # redraw the card outline over the bled illustration
+    d.rounded_rectangle([x, y, x + w, y + h], radius=4, outline=NAVY, width=2)
+    cy = sy + strip_h + 5
     r = 10 if large else 8
     d.ellipse([x + 10, cy, x + 10 + 2 * r, cy + 2 * r], fill=col)
     d.text((x + 10 + r - 3, cy + 2), str(num), font=font(SANSB, 11 if large else 10), fill=(255, 255, 255))
-    d.text((x + 14 + 2 * r, cy + 2), cat, font=font(SANSB, 11 if large else 10), fill=col)
-    hy = cy + 2 * r + 4
-    hf = font(SERIFB, 19 if large else 15)
+    d.text((x + 14 + 2 * r, cy + 2), cat, font=font(SANSB, 12 if large else 11), fill=col)
+    hy = cy + 2 * r + 3
+    hf = font(SERIFB, 20 if large else 16)
     hlines = wrap(d, head, hf, w - 20)
     for i, ln in enumerate(hlines[:2]):
-        d.text((x + 10, hy + i * (22 if large else 17)), ln, font=hf, fill=INK)
-    dy = hy + len(hlines[:2]) * (22 if large else 17) + 2
-    df = font(SANS, 12 if large else 10)
+        d.text((x + 10, hy + i * (21 if large else 17)), ln, font=hf, fill=INK)
+    dy = hy + len(hlines[:2]) * (21 if large else 17) + 1
+    df = font(SANS, 12 if large else 11)
     for i, ln in enumerate(wrap(d, dek, df, w - 20)[:2]):
-        d.text((x + 10, dy + i * (14 if large else 12)), ln, font=df, fill=(60, 60, 60))
+        d.text((x + 10, dy + i * (13 if large else 12)), ln, font=df, fill=(35, 35, 35))
 
-# row 1: 3 large panels (184 high: the dek needs two full lines)
+# row 1: 3 large panels (192 high: taller picture, two full dek lines)
 for i, p in enumerate(PANELS[:3]):
-    draw_panel(14 + i * 336, 124, 324, 184, p, True)
-# rows 2 and 3: 5 small panels each
+    draw_panel(14 + i * 336, 126, 324, 192, p, True)
+# rows 2 and 3: 5 small panels each (164 high, same 8px gutters)
 for row, group in enumerate((PANELS[3:8], PANELS[8:13])):
     for i, p in enumerate(group):
-        draw_panel(14 + i * 201, 316 + row * 164, 191, 156, p, False)
+        draw_panel(14 + i * 201, 326 + row * 164, 191, 164, p, False)
 
 # ---------- bottom: map + also list ----------
-by = 644
+by = 670
 # map panel (left, wider now so the world map can actually be read)
-mx, mw, mh = 14, 380, 308
-d.rounded_rectangle([mx + 3, by + 3, mx + mw + 3, by + mh + 3], radius=6, fill=(208, 198, 178))
-d.rounded_rectangle([mx, by, mx + mw, by + mh], radius=6, fill=(255, 255, 255), outline=NAVY, width=2)
+mx, mw, mh = 14, 360, 292
+d.rounded_rectangle([mx + 2, by + 2, mx + mw + 2, by + mh + 2], radius=4, fill=(190, 180, 160))
+d.rounded_rectangle([mx, by, mx + mw, by + mh], radius=4, fill=(255, 255, 255), outline=NAVY, width=2)
 d.text((mx + 12, by + 10), "WHERE IT HAPPENED", font=font(SANSB, 16), fill=NAVY)
 d.line([mx + 12, by + 34, mx + mw - 12, by + 34], fill=NAVY, width=2)
-mapx, mapy, mapw, maph = mx + 10, by + 40, mw - 20, 176
+mapx, mapy, mapw, maph = mx + 10, by + 40, mw - 20, 170
 # sea with a depth gradient, lighter near the top
 vgrad(mapx, mapy, mapw, maph, (202, 226, 238), (164, 196, 222))
 # equirectangular projection: lon -170..190, lat 75..-55
@@ -678,7 +684,7 @@ for la in (60, 30, 0, -30):
 LAND = [
     ([(-168, 66), (-140, 70), (-120, 72), (-95, 80), (-80, 73), (-65, 60), (-55, 47), (-70, 42), (-75, 35), (-80, 26), (-90, 21), (-97, 16), (-92, 14), (-83, 9), (-79, 9), (-83, 15), (-90, 14), (-97, 26), (-105, 20), (-110, 24), (-120, 34), (-125, 40), (-125, 49), (-130, 55), (-140, 60), (-155, 58), (-165, 60)], "N. AMERICA", -100, 58),
     ([(-79, 9), (-77, 4), (-80, -3), (-81, -6), (-77, -12), (-72, -18), (-70, -23), (-70, -30), (-72, -37), (-73, -44), (-70, -50), (-68, -55), (-65, -55), (-62, -48), (-58, -38), (-52, -32), (-48, -28), (-41, -23), (-35, -9), (-35, -6), (-44, -3), (-50, 0), (-53, 4), (-58, 6), (-62, 9), (-70, 11), (-75, 10)], "S. AMERICA", -60, -14),
-    ([(-10, 36), (-9, 43), (-2, 44), (-1, 46), (-4, 48), (-1, 50), (2, 51), (5, 53), (8, 57), (10, 59), (5, 60), (5, 62), (12, 65), (18, 69), (25, 71), (30, 70), (35, 68), (40, 68), (45, 65), (48, 60), (45, 55), (40, 50), (38, 46), (32, 46), (28, 45), (23, 40), (26, 38), (23, 36), (19, 40), (15, 44), (12, 44), (8, 44), (3, 42), (-9, 37)], "EUROPE", -15, 45),
+    ([(-10, 36), (-9, 43), (-2, 44), (-1, 46), (-4, 48), (-1, 50), (2, 51), (5, 53), (8, 57), (10, 59), (5, 60), (5, 62), (12, 65), (18, 69), (25, 71), (30, 70), (35, 68), (40, 68), (45, 65), (48, 60), (45, 55), (40, 50), (38, 46), (32, 46), (28, 45), (23, 40), (26, 38), (23, 36), (19, 40), (15, 44), (12, 44), (8, 44), (3, 42), (-9, 37)], "EUROPE", -28, 52),
     ([(-5, 50), (-3, 53), (-5, 56), (-3, 58), (-1, 57), (0, 53)], None, None, None),
     ([(-17, 15), (-16, 20), (-13, 27), (-10, 31), (-6, 35), (0, 36), (10, 37), (11, 34), (20, 32), (25, 32), (30, 31), (32, 31), (35, 28), (37, 22), (39, 18), (43, 12), (48, 11), (51, 10), (46, 5), (41, 0), (40, -5), (40, -10), (36, -18), (33, -26), (28, -33), (20, -35), (17, -32), (15, -27), (12, -18), (13, -12), (9, -1), (9, 4), (-8, 4), (-13, 8), (-17, 12)], "AFRICA", -25, 0),
     ([(44, -16), (47, -15), (50, -16), (49, -20), (45, -25), (43, -22)], None, None, None),
@@ -693,7 +699,7 @@ for poly, lab, llo, lla in LAND:
 PINS = {1: (37, 45, 0, -34), 2: (50.5, 26, 40, -6), 3: (121, 14.5, 0, 0),
         4: (34.5, 31.5, 38, 22), 5: (130.5, 33.6, 0, 0), 6: (30, -2, -28, 20),
         7: (107, 48, 26, -20), 8: (-74, 41, 0, 0), 9: (29.5, 1.5, -30, -14),
-        10: (30.7, 36.9, -40, 8), 11: (20.5, 44.8, -38, -22),
+        10: (30.7, 36.9, -40, 8), 11: (20.5, 44.8, -48, -28),
         12: (86, 55.3, -30, 18), 13: (32.6, -26, 0, 0)}
 PINCOL = {1: BLUE, 2: CRIMSON, 3: CRIMSON, 4: CRIMSON, 5: CRIMSON, 6: BLUE, 7: CRIMSON, 8: PURPLE,
           9: GREEN, 10: TEAL, 11: BLUE, 12: CRIMSON, 13: GREEN}
@@ -703,10 +709,10 @@ for n, (lo, la, dx, dy) in PINS.items():
     if dx or dy:
         d.line([px, py, cx, cy], fill=NAVY, width=1)
         d.ellipse([px - 3, py - 3, px + 3, py + 3], fill=PINCOL[n], outline=(255, 255, 255), width=1)
-    d.ellipse([cx - 10, cy - 10, cx + 10, cy + 10], fill=PINCOL[n], outline=(255, 255, 255), width=2)
-    nf = font(SANSB, 11)
+    d.ellipse([cx - 11, cy - 11, cx + 11, cy + 11], fill=PINCOL[n], outline=(255, 255, 255), width=2)
+    nf = font(SANSB, 12)
     d.text((cx - d.textlength(str(n), font=nf) / 2, cy - 8), str(n), font=nf, fill=(255, 255, 255))
-ly = by + 222
+ly = by + 216
 lx_leg = mx + 12
 for col, label in [(BLUE, "Europe"), (CRIMSON, "Asia"), (GREEN, "Africa"), (PURPLE, "N. America"), (TEAL, "Climate")]:
     d.ellipse([lx_leg, ly + 2, lx_leg + 10, ly + 12], fill=col)
@@ -720,11 +726,13 @@ STATS = [("2 days", "Kerch Bridge struck twice", BLUE),
          ("$115.8bn", "Nvidia quarterly sales", PURPLE),
          ("-849", "Dow points", CRIMSON)]
 sw = (mw - 24 - 3 * 8) // 4
-sy0 = by + 244
+sy0 = by + 232
 for i, (num, lab, col) in enumerate(STATS):
     bx0 = mx + 12 + i * (sw + 8)
     d.rounded_rectangle([bx0, sy0, bx0 + sw, sy0 + 52], radius=4,
                         fill=(255, 255, 255), outline=col, width=2)
+    # coloured top bar ties each stat to its region colour
+    d.rectangle([bx0 + 2, sy0 + 2, bx0 + sw - 2, sy0 + 6], fill=col)
     nf = font(SANSB, 15)
     d.text((bx0 + (sw - d.textlength(num, font=nf)) / 2, sy0 + 5), num, font=nf, fill=col)
     lf = font(SANS, 8)
@@ -733,9 +741,9 @@ for i, (num, lab, col) in enumerate(STATS):
                font=lf, fill=(60, 60, 60))
 
 # also list (right)
-lx, lw = 406, 604
-d.rounded_rectangle([lx + 3, by + 3, lx + lw + 3, by + mh + 3], radius=6, fill=(208, 198, 178))
-d.rounded_rectangle([lx, by, lx + lw, by + mh], radius=6, fill=(255, 255, 255), outline=NAVY, width=2)
+lx, lw = 386, 624
+d.rounded_rectangle([lx + 2, by + 2, lx + lw + 2, by + mh + 2], radius=4, fill=(190, 180, 160))
+d.rounded_rectangle([lx, by, lx + lw, by + mh], radius=4, fill=(255, 255, 255), outline=NAVY, width=2)
 d.text((lx + 12, by + 10), "ALSO ON TUESDAY 17 NOVEMBER", font=font(SANSB, 16), fill=NAVY)
 d.line([lx + 12, by + 34, lx + lw - 12, by + 34], fill=NAVY, width=2)
 ALSO = [
@@ -770,11 +778,11 @@ ALSO = [
     ("Darwin:", " M6.6 quake felt; no tsunami warning."),
     ("Apple:", " Pay, iCloud, App Store down; not a hack."),
 ]
-col_w = 286
+col_w = 296
 for ci in range(2):
     items = ALSO[ci * 15:(ci + 1) * 15]
     cx = lx + 12 + ci * (col_w + 8)
-    yy = by + 42
+    yy = by + 40
     for j, (bold, rest) in enumerate(items):
         num = 14 + ci * 15 + j
         d.text((cx, yy), f"{num}.", font=font(SANSB, 10), fill=RED)
@@ -786,24 +794,24 @@ for ci in range(2):
         bw = d.textlength(bold, font=font(SANSB, 10))
         d.text((bx + bw + 2, yy), flines[0][len(bold):], font=font(SANS, 10), fill=INK)
         if len(flines) > 1:
-            d.text((bx, yy + 12), flines[1], font=font(SANS, 10), fill=INK)
-            yy += 29
+            d.text((bx, yy + 11), flines[1], font=font(SANS, 10), fill=INK)
+            yy += 26
         else:
-            yy += 17
+            yy += 16
 
 # ---------- footer ----------
-d.text((16, 966), "Every story here happened or was first reported on Tuesday 17 November 2026.",
-       font=font(SANS, 12), fill=GREY)
+d.text((16, 976), "Every story here happened or was first reported on Tuesday 17 November 2026.",
+       font=font(SANS, 13), fill=GREY)
 foot_r = "Sources: Reuters, AP, AFP, BBC, Al Jazeera. Original drawings."
-d.text((W - 16 - d.textlength(foot_r, font=font(SANS, 12)), 966), foot_r,
-       font=font(SANS, 12), fill=GREY)
+d.text((W - 16 - d.textlength(foot_r, font=font(SANS, 13)), 976), foot_r,
+       font=font(SANS, 13), fill=GREY)
 
 # a whisper of film grain over the whole page (seeded, so it is identical
 # every run): it takes the flat digital edge off the paper and the drawings
 rng = random.Random(20261117)
 noise = Image.new("L", (W, H))
-noise.putdata([128 + rng.randint(-10, 10) for _ in range(W * H)])
-img = Image.blend(img, Image.merge("RGB", (noise, noise, noise)), 0.03)
+noise.putdata([128 + rng.randint(-7, 7) for _ in range(W * H)])
+img = Image.blend(img, Image.merge("RGB", (noise, noise, noise)), 0.02)
 
 img.save(OUT, "PNG", optimize=True)
 print("wrote", OUT, os.path.getsize(OUT), "bytes")
