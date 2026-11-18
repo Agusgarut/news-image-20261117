@@ -223,9 +223,10 @@ def pic(kind, x, y, w, h):
             d.rectangle([bx0, y + h - 48, bx1, y + h - 40], fill=(58, 58, 62))
             d.line([(bx0, y + h - 48), (bx1, y + h - 48)], fill=(150, 150, 155), width=2)
             d.line([(bx0, y + h - 41), (bx1, y + h - 41)], fill=(30, 30, 34), width=2)
-            for px0 in (bx0 + 18, bx0 + (bx1 - bx0) // 2, bx1 - 24):
+            for px0 in (bx0 + 10, bx0 + (bx1 - bx0) // 3, bx0 + 2 * (bx1 - bx0) // 3, bx1 - 22):
                 d.rectangle([px0, y + h - 40, px0 + 6, y + h - 22], fill=(44, 44, 48))
                 d.rectangle([px0, y + h - 26, px0 + 10, y + h - 22], fill=(30, 30, 34))
+                d.line([(px0 + 3, y + h - 40), (px0 + 3, y + h - 22)], fill=(120, 120, 126), width=1)
         # two small jets in the sky
         for jx, jy in [(x + w // 2 - 66, y + 12), (x + w // 2 + 52, y + 6)]:
             d.polygon([(jx, jy), (jx + 12, jy + 2), (jx, jy + 4)], fill=(30, 30, 36))
@@ -238,15 +239,22 @@ def pic(kind, x, y, w, h):
         for fx, fy, fr in [(x + w // 2 - 18, y + h - 12, 5), (x + w // 2 + 4, y + h - 9, 6),
                             (x + w // 2 + 18, y + h - 13, 4)]:
             d.arc([fx - fr, fy - fr, fx + fr, fy + fr], 180, 360, fill=(230, 245, 245), width=2)
-        # layered smoke plumes over the break
+        # layered smoke plumes over the break: a tall column, not one puff
         soft_disc(x + w // 2 - 8, y + 14, 16, 10, (90, 90, 95), sky, steps=5)
         soft_disc(x + w // 2 + 12, y + 8, 12, 8, (120, 120, 125), sky, steps=5)
         soft_disc(x + w // 2 + 2, y + 20, 9, 6, (60, 60, 65), sky, steps=4)
+        soft_disc(x + w // 2 - 2, y + 2, 18, 11, (70, 70, 75), sky, steps=5)
+        soft_disc(x + w // 2 + 20, y + 16, 10, 7, (150, 150, 155), sky, steps=4)
+        # a second, smaller burst of foam where debris hit the water
+        for fx, fy, fr in [(x + w // 3 + 30, y + h - 10, 5), (x + w // 3 + 44, y + h - 8, 4)]:
+            d.arc([fx - fr, fy - fr, fx + fr, fy + fr], 180, 360, fill=(230, 245, 245), width=2)
         flag("ukraine", x + 8, y + 6, 54, 30)
         # place labels over the sea, like the reference: Crimea at the
-        # near end of the bridge, Russia at the far end
-        d.text((x + 10, y + h - 18), "CRIMEA", font=font(SANSB, 8), fill=(235, 244, 248))
-        d.text((x + w - 46, y + h - 18), "RUSSIA", font=font(SANSB, 8), fill=(235, 244, 248))
+        # near end of the bridge, Russia at the far end; a dark halo
+        # keeps the small caps readable over the waves
+        for lx_, lab in [(x + 10, "CRIMEA"), (x + w - 48, "RUSSIA")]:
+            d.text((lx_ + 1, y + h - 17), lab, font=font(SANSB, 9), fill=(10, 50, 64))
+            d.text((lx_, y + h - 18), lab, font=font(SANSB, 9), fill=(235, 244, 248))
     elif kind == "radar":
         # a real map of the Gulf, like the reference: cream land, blue sea,
         # coastline, place names, and boxed callouts at the right spots
@@ -273,6 +281,14 @@ def pic(kind, x, y, w, h):
         d.text((x + 108, y + 6), "IRAN", font=font(SANSB, 10), fill=(90, 70, 40))
         d.text((x + 16, y + 38), "BAHRAIN", font=font(SANSB, 8), fill=(90, 70, 40))
         d.text((x + w - 92, y + 40), "QESHM", font=font(SANSB, 8), fill=(90, 70, 40))
+        # the strait itself, labelled low so it never touches QESHM
+        d.text((x + w - 108, y + h - 9), "HORMUZ", font=font(SANSB, 7), fill=(40, 90, 120))
+        # a radar dish on Bahrain, and a second tanker with a smoke wisp
+        d.pieslice([x + 22, y + 44, x + 40, y + 60], 270, 360, fill=(255, 255, 255), outline=NAVY, width=1)
+        d.line([(x + 31, y + 52), (x + 38, y + 44)], fill=NAVY, width=2)
+        d.rectangle([x + 120, y + h - 14, x + 146, y + h - 8], fill=(90, 70, 50))
+        d.rectangle([x + 126, y + h - 19, x + 140, y + h - 14], fill=(120, 100, 70))
+        soft_disc(x + 140, y + h - 22, 6, 4, (120, 120, 125), (150, 195, 222), steps=3)
         # boxed callouts: red where drones were downed, blue where the US struck
         d.rectangle([x + 88, y + 24, x + 184, y + 36], fill=(200, 30, 30))
         d.text((x + 93, y + 26), "DRONES DOWNED", font=font(SANSB, 8), fill=(255, 255, 255))
@@ -301,10 +317,16 @@ def pic(kind, x, y, w, h):
             d.line([(fx + fw // 2, y + 17), (fx + fw // 2, y + h - 6)], fill=(90, 70, 50), width=1)
             flag(fk, fx, y + 18, fw, 22)
             d.text((fx, y + 41), lab, font=font(SANSB, 8), fill=NAVY)
-        # a critical-minerals gem on the table, for the deals in the dek
-        gx, gy = x + w // 2, y + h - 12
-        d.polygon([(gx, gy - 5), (gx + 6, gy), (gx, gy + 5), (gx - 6, gy)], fill=(80, 200, 220),
-                  outline=NAVY, width=1)
+        # microphones in front of two of the flags, and a row of
+        # critical-minerals gems on the table, for the deals in the dek
+        for mx0 in (x + 40, x + w - 52):
+            d.line([(mx0, y + h - 6), (mx0 + 4, y + h - 18)], fill=(40, 40, 44), width=2)
+            d.ellipse([mx0 + 1, y + h - 21, mx0 + 7, y + h - 15], fill=(40, 40, 44))
+        for gx, gy, gc in [(x + w // 2 - 22, y + h - 12, (80, 200, 220)),
+                           (x + w // 2, y + h - 12, (120, 220, 160)),
+                           (x + w // 2 + 22, y + h - 12, (200, 180, 90))]:
+            d.polygon([(gx, gy - 5), (gx + 6, gy), (gx, gy + 5), (gx - 6, gy)], fill=gc,
+                      outline=NAVY, width=1)
     elif kind == "truck":
         # dusty road at golden hour: warm sky, hazy hills, shaded asphalt
         vgrad(x, y, w, h, (242, 226, 188), (224, 200, 150))
@@ -334,6 +356,10 @@ def pic(kind, x, y, w, h):
             d.ellipse([wxx, wyy, wxx + 22, wyy + 16], fill=(28, 28, 30))
             d.ellipse([wxx + 7, wyy + 5, wxx + 15, wyy + 11], fill=(160, 160, 165))
         d.text((x + 10, y + 28), "AID", font=font(SANSB, 16), fill=RED)
+        # aid crates waiting beside the road, below the AID label
+        for cx0 in (x + 12, x + 30):
+            d.rectangle([cx0, y + 46, cx0 + 14, y + 55], fill=(190, 150, 90), outline=(90, 70, 40), width=1)
+            d.line([(cx0, y + 50), (cx0 + 14, y + 50)], fill=(90, 70, 40), width=1)
     elif kind == "jet":
         # morning sky gradient, soft clouds, a sun disc behind the flag
         sky3 = (205, 230, 244)
@@ -362,6 +388,12 @@ def pic(kind, x, y, w, h):
         jx, jy = x + 34, y + 10
         d.polygon([(jx, jy), (jx + 18, jy - 3), (jx + 24, jy), (jx + 18, jy + 3)], fill=(70, 90, 120))
         d.polygon([(jx + 12, jy - 2), (jx + 20, jy - 8), (jx + 22, jy - 2)], fill=(70, 90, 120))
+        # a long fading contrail behind the lead jet, and a rocky
+        # coastline at the foot of the sea strip
+        d.line([(x + 8, y + h // 2 + 6), (x + 30, y + h // 2 + 4)], fill=(255, 255, 255), width=2)
+        d.line([(x + 8, y + h // 2 + 9), (x + 22, y + h // 2 + 8)], fill=(230, 240, 248), width=1)
+        d.polygon([(x, y + h - 12), (x + 26, y + h - 12), (x + 18, y + h - 6), (x, y + h - 6)],
+                  fill=(150, 140, 110))
     elif kind == "map":
         # green hill country: layered hills, a lake, and the map pin on top
         vgrad(x, y, w, h, (206, 232, 200), (168, 205, 160))
@@ -380,6 +412,15 @@ def pic(kind, x, y, w, h):
         d.ellipse([x + w // 2 - 2, y + h - 10, x + w // 2 + 30, y + h - 4], fill=(70, 130, 70))
         d.ellipse([x + w // 2 - 6, y + 12, x + w // 2 + 10, y + 28], fill=RED)
         d.polygon([(x + w // 2 + 2, y + 28), (x + w // 2 - 3, y + 38), (x + w // 2 + 7, y + 38)], fill=RED)
+        # Kigali, marked on the map: white text with a dark halo so it
+        # reads over both the red pin and the green map
+        d.ellipse([x + w // 2 - 2, y + 16, x + w // 2 + 4, y + 22], fill=(255, 255, 255),
+                  outline=NAVY, width=1)
+        for ox, oy in [(1, 0), (0, 1), (1, 1)]:
+            d.text((x + w // 2 + 13 + ox, y + 14 + oy), "KIGALI", font=font(SANSB, 7), fill=NAVY)
+        d.text((x + w // 2 + 13, y + 14), "KIGALI", font=font(SANSB, 7), fill=(255, 255, 255))
+        d.ellipse([x + w - 40, y + h - 22, x + w - 14, y + h - 12], fill=(120, 185, 215))
+        d.arc([x + w - 40, y + h - 22, x + w - 14, y + h - 12], 180, 360, fill=(220, 240, 250), width=1)
         # pilot size, from the dek: about 100 people. Drawn last so the
         # map shape and its shadow never cover the tag.
         d.rectangle([x + w - 62, y + h - 18, x + w - 6, y + h - 4], fill=(255, 255, 255), outline=NAVY, width=1)
@@ -412,6 +453,10 @@ def pic(kind, x, y, w, h):
         for ly_ in (16, 20, 24):
             d.line([(x + w - 54, y + ly_), (x + w - 10, y + ly_)], fill=(160, 160, 160), width=1)
         d.ellipse([x + w - 22, y + 22, x + w - 12, y + 30], fill=(178, 34, 34))
+        # a second, smaller ger far off to the left, for depth
+        d.pieslice([x + 12, y + h - 22, x + 44, y + h - 6], 180, 360, fill=(226, 214, 182),
+                   outline=NAVY, width=1)
+        d.rectangle([x + 24, y + h - 14, x + 32, y + h - 6], fill=(178, 44, 40))
     elif kind == "chart":
         # a trading screen: dark blue board, glowing bars, a falling line
         vgrad(x, y, w, h, (38, 52, 78), (22, 32, 56))
@@ -419,9 +464,11 @@ def pic(kind, x, y, w, h):
         for tx in range(x + 12, x + w - 12, 14):
             d.rectangle([tx, y + 6, tx + 6, y + 10], fill=(255, 180, 60) if (tx // 14) % 3 else (90, 200, 120))
         flag("us", x + w - 58, y + 14, 50, 22)
-        # short bars along the bottom, leaving the top-left clear for the
-        # big sales number chip
-        bars = [8, 10, 9, 12, 16]
+        # faint gridlines behind the chart, then taller bars along the
+        # bottom, leaving the top-left clear for the sales number chip
+        for gy_ in (y + h - 26, y + h - 40):
+            d.line([(x + 8, gy_), (x + w - 8, gy_)], fill=(60, 75, 110), width=1)
+        bars = [10, 12, 12, 18, 24]
         for i, bh in enumerate(bars):
             bx = x + 12 + i * ((w - 24) // 5)
             col = (60, 190, 110) if i < 4 else (230, 70, 60)
@@ -431,6 +478,9 @@ def pic(kind, x, y, w, h):
             d.line([(bx + 11, y + h - 10 - bh), (bx + 11, y + h - 16 - bh)], fill=col, width=2)
         d.line([x + 10, y + h - 30, x + w - 10, y + 10], fill=(255, 214, 130), width=2)
         d.ellipse([x + w - 16, y + 12, x + w - 8, y + 20], fill=(230, 70, 60))
+        # the Dow fall from the headline, as a red tag under the sales chip
+        d.rectangle([x + 8, y + 30, x + 70, y + 40], fill=(200, 30, 30))
+        d.text((x + 11, y + 31), "DOW -849", font=font(SANSB, 8), fill=(255, 255, 255))
         # the sales number from the dek, big on the board, on its own dark
         # chip drawn last so the bars and trend line never cross the digits
         # (Dow -849 is already in the headline and in the stat strip)
@@ -440,10 +490,13 @@ def pic(kind, x, y, w, h):
         # a clinic yard: pale sky, a white clinic with a red cross, shaded ground
         vgrad(x, y, w, h, (244, 224, 220), (232, 200, 196))
         d.rectangle([x, y + h - 12, x + w, y + h], fill=(190, 160, 140))
-        d.rectangle([x + w // 2 - 34, y + 12, x + w // 2 + 34, y + h - 12], fill=(252, 252, 248),
+        d.rectangle([x + w // 2 - 40, y + 12, x + w // 2 + 40, y + h - 12], fill=(252, 252, 248),
                     outline=(180, 170, 160), width=1)
-        d.polygon([(x + w // 2 - 40, y + 12), (x + w // 2, y + 2), (x + w // 2 + 40, y + 12)],
+        d.polygon([(x + w // 2 - 46, y + 12), (x + w // 2, y + 2), (x + w // 2 + 46, y + 12)],
                   fill=(178, 44, 40))
+        # lit windows on the outer wings of the clinic front
+        for wx0 in (x + w // 2 - 37, x + w // 2 + 31):
+            d.rectangle([wx0, y + 20, wx0 + 6, y + 26], fill=(255, 220, 120))
         d.rectangle([x + w // 2 - 6, y + 18, x + w // 2 + 6, y + 30], fill=(200, 40, 40))
         d.rectangle([x + w // 2 - 12, y + 22, x + w // 2 + 12, y + 26], fill=(200, 40, 40))
         d.rectangle([x + w // 2 - 20, y + 32, x + w // 2 + 20, y + h - 12], fill=(120, 70, 60))
@@ -455,11 +508,11 @@ def pic(kind, x, y, w, h):
         # the case count from the headline, as a tag top-right
         d.rectangle([x + w - 72, y + 6, x + w - 6, y + 20], fill=(255, 255, 255), outline=RED, width=1)
         d.text((x + w - 68, y + 8), "11,000+", font=font(SANSB, 9), fill=RED)
-        # the virus, shaded with a darker rim and a pale centre
-        cx, cy, r = x + w - 30, y + h // 2 + 8, 11
+        # the virus, bigger now, shaded with a darker rim and a pale centre
+        cx, cy, r = x + w - 32, y + h // 2 + 10, 14
         for ang in range(0, 360, 45):
             dx, dy = math.cos(math.radians(ang)), math.sin(math.radians(ang))
-            d.line([cx + dx * r, cy + dy * r, cx + dx * (r + 7), cy + dy * (r + 7)], fill=RED, width=3)
+            d.line([cx + dx * r, cy + dy * r, cx + dx * (r + 8), cy + dy * (r + 8)], fill=RED, width=3)
         d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=(190, 30, 30))
         d.ellipse([cx - r + 3, cy - r + 2, cx - 2, cy - 2], fill=(230, 90, 80))
         d.ellipse([cx - 4, cy - 4, cx + 4, cy + 4], fill=(255, 255, 255))
@@ -471,20 +524,22 @@ def pic(kind, x, y, w, h):
         d.rectangle([x + w // 2 - 22, y + h - 22, x + w // 2 + 22, y + h - 19], fill=(150, 115, 82))
         d.ellipse([x + w // 2 - 8, y + h - 30, x + w // 2 + 8, y + h - 22], fill=(240, 220, 190))
         flag("turkiye", x + 8, y + 6, 56, 32)
-        # globe: ocean gradient, green land arcs, a bright highlight
-        gx0, gy0 = x + w - 50, y + 2
-        d.ellipse([gx0, gy0, gx0 + 44, gy0 + 44], fill=(110, 185, 218), outline=NAVY, width=2)
-        d.pieslice([gx0 + 22, gy0, gx0 + 44, gy0 + 44], 270, 360, fill=(80, 160, 195))
-        d.arc([gx0, gy0, gx0 + 44, gy0 + 44], 200, 340, fill=(70, 160, 90), width=6)
-        d.arc([gx0, gy0, gx0 + 44, gy0 + 44], 20, 120, fill=(70, 160, 90), width=5)
-        d.arc([gx0 + 6, gy0 + 4, gx0 + 22, gy0 + 20], 200, 320, fill=(255, 255, 255), width=2)
+        # globe: ocean gradient, green land arcs, a bright highlight —
+        # bigger now, filling the right half of the panel
+        gx0, gy0 = x + w - 58, y + 2
+        d.ellipse([gx0, gy0, gx0 + 52, gy0 + 52], fill=(110, 185, 218), outline=NAVY, width=2)
+        d.pieslice([gx0 + 26, gy0, gx0 + 52, gy0 + 52], 270, 360, fill=(80, 160, 195))
+        d.arc([gx0, gy0, gx0 + 52, gy0 + 52], 200, 340, fill=(70, 160, 90), width=6)
+        d.arc([gx0, gy0, gx0 + 52, gy0 + 52], 20, 120, fill=(70, 160, 90), width=5)
+        d.arc([gx0 + 7, gy0 + 5, gx0 + 26, gy0 + 24], 200, 320, fill=(255, 255, 255), width=2)
         # the question the talks are split over, as a tag bottom-left
         d.rectangle([x + 8, y + h - 16, x + 92, y + h - 4], fill=(255, 255, 255), outline=TEAL, width=1)
         d.text((x + 12, y + h - 14), "PHASE OUT?", font=font(SANSB, 8), fill=TEAL)
-        # a small thermometer beside the globe, mercury rising
-        d.rectangle([x + w - 62, y + 10, x + w - 56, y + h - 14], fill=(255, 255, 255), outline=NAVY, width=1)
-        d.rectangle([x + w - 61, y + 22, x + w - 57, y + h - 15], fill=(220, 60, 40))
-        d.ellipse([x + w - 64, y + h - 16, x + w - 54, y + h - 6], fill=(220, 60, 40))
+        # a thermometer standing between the flag and the globe,
+        # mercury rising (fits the 60px-tall picture)
+        d.rectangle([x + 66, y + 10, x + 72, y + 36], fill=(255, 255, 255), outline=NAVY, width=1)
+        d.rectangle([x + 67, y + 18, x + 71, y + 35], fill=(220, 60, 40))
+        d.ellipse([x + 64, y + 34, x + 74, y + 44], fill=(220, 60, 40))
     elif kind == "parliament":
         # the parliament house at dusk: warm sky, lit columns, steps, a crowd
         vgrad(x, y, w, h, (232, 222, 208), (206, 196, 178))
@@ -496,30 +551,37 @@ def pic(kind, x, y, w, h):
         d.text((x + 20, y + h - 14), "140", font=font(SANSB, 8), fill=NAVY)
         d.ellipse([x + 40, y + h - 13, x + 47, y + h - 7], fill=BLUE)
         d.text((x + 49, y + h - 14), "103", font=font(SANSB, 8), fill=NAVY)
-        # pediment with a shaded edge, columns with light and shadow sides
-        d.polygon([(x + 70, y + 10), (x + w // 2 + 20, y - 2), (x + w - 14, y + 10)], fill=NAVY)
-        d.polygon([(x + 70, y + 10), (x + w // 2 + 20, y - 2), (x + w // 2 + 20, y + 10)], fill=(60, 75, 100))
-        for i in range(3):
-            cx = x + 76 + i * 28
-            d.rectangle([cx, y + 14, cx + 8, y + h - 8], fill=(240, 238, 230), outline=(150, 145, 130), width=1)
-            d.rectangle([cx + 5, y + 14, cx + 8, y + h - 8], fill=(200, 195, 180))
-            d.rectangle([cx - 2, y + 12, cx + 10, y + 15], fill=(240, 238, 230))
-        d.rectangle([x + 70, y + h - 10, x + w - 14, y + h - 4], fill=(180, 170, 155))
-        d.rectangle([x + 70, y + h - 7, x + w - 14, y + h - 4], fill=(150, 140, 125))
-        # a small crowd in front of the steps
-        for cx, cy, c in [(x + 84, y + h - 4, RED), (x + 96, y + h - 5, BLUE),
-                          (x + 108, y + h - 4, (60, 60, 60)), (x + 120, y + h - 5, RED)]:
-            d.ellipse([cx - 3, cy - 6, cx + 3, cy], fill=c)
+        # a semicircular seating chart, like the reference: three arcs
+        # of seats, students in red on the left (140), the Vucic bloc
+        # in blue on the right (103), one grey seat at the far end
+        cx0, cy0 = x + w // 2 + 20, y + h - 6
+        d.pieslice([cx0 - 34, cy0 - 34, cx0 + 34, cy0 + 34], 180, 360,
+                   fill=(240, 236, 224), outline=(150, 145, 130), width=1)
+        d.line([(cx0 - 34, cy0), (cx0 + 34, cy0)], fill=(150, 145, 130), width=1)
+        seat = 0
+        for radius, count in [(28, 11), (20, 9), (12, 5)]:
+            for k in range(count):
+                ang = math.radians(200 + (140 * k / max(1, count - 1)))
+                sx = cx0 + radius * math.cos(ang)
+                sy = cy0 + radius * math.sin(ang)
+                col = RED if seat < 14 else (BLUE if seat < 24 else (120, 120, 120))
+                d.ellipse([sx - 3, sy - 3, sx + 3, sy + 3], fill=col, outline=(255, 255, 255), width=1)
+                seat += 1
+        # the speaker's desk at the foot of the semicircle
+        d.rectangle([cx0 - 10, cy0 - 4, cx0 + 10, cy0 + 2], fill=NAVY)
     elif kind == "crash":
         # a snowy Siberian forest at dusk: grey-blue sky, pines, snow, smoke
         vgrad(x, y, w, h, (196, 206, 220), (228, 232, 238))
         cloud(x + 40, y + 8, 9, (200, 210, 222))
-        # pine trees along the back, snow-capped
+        # pine trees along the back, snow-capped, in two depths
         for tx, th in [(x + 6, 22), (x + 26, 28), (x + 48, 20), (x + w - 58, 24), (x + w - 38, 28)]:
             d.polygon([(tx, y + h - 14), (tx + 8, y + h - 14 - th), (tx + 16, y + h - 14)],
                       fill=(36, 80, 52))
             d.polygon([(tx + 4, y + h - 14 - th + 6), (tx + 8, y + h - 14 - th), (tx + 12, y + h - 14 - th + 6)],
                       fill=(235, 238, 242))
+        for tx, th in [(x + 70, 14), (x + w - 84, 16)]:
+            d.polygon([(tx, y + h - 14), (tx + 6, y + h - 14 - th), (tx + 12, y + h - 14)],
+                      fill=(52, 96, 66))
         # snow ground with a soft shadow under the wreck
         vgrad(x, y + h - 14, w, 14, (238, 240, 244), (214, 220, 228))
         d.ellipse([x + 30, y + h - 12, x + w - 30, y + h - 4], fill=(190, 196, 206))
@@ -533,11 +595,12 @@ def pic(kind, x, y, w, h):
         # the death toll from the dek, as a tag on the snow bottom-left
         d.rectangle([x + 8, y + h - 16, x + 118, y + h - 4], fill=(255, 255, 255), outline=NAVY, width=1)
         d.text((x + 12, y + h - 14), "ALL 19 KILLED", font=font(SANSB, 8), fill=NAVY)
-        # layered smoke and a small fire glow at the impact point
+        # layered smoke and a bigger fire glow at the impact point
         soft_disc(x + w - 34, y + 12, 12, 8, (130, 130, 135), (200, 210, 222), steps=5)
         soft_disc(x + w - 22, y + 18, 10, 7, (160, 160, 165), (200, 210, 222), steps=4)
-        soft_disc(x + w - 26, y + h - 18, 10, 7, (255, 170, 60), (220, 224, 232), steps=4)
-        d.polygon([(x + w - 30, y + h - 16), (x + w - 24, y + h - 28), (x + w - 18, y + h - 16)], fill=(220, 90, 30))
+        soft_disc(x + w - 26, y + h - 20, 13, 9, (255, 170, 60), (220, 224, 232), steps=4)
+        soft_disc(x + w - 26, y + h - 22, 7, 5, (255, 220, 120), (220, 224, 232), steps=3)
+        d.polygon([(x + w - 32, y + h - 16), (x + w - 24, y + h - 32), (x + w - 16, y + h - 16)], fill=(220, 90, 30))
     elif kind == "scales":
         # a courthouse in Maputo: warm sky, a columned facade, shaded steps
         vgrad(x, y, w, h, (236, 228, 208), (214, 200, 172))
@@ -548,19 +611,22 @@ def pic(kind, x, y, w, h):
             d.rectangle([cx + 5, y + 16, cx + 8, y + h - 12], fill=(195, 186, 165))
         d.rectangle([x + 10, y + h - 12, x + w - 10, y + h - 4], fill=(170, 155, 130))
         flag("mozambique", x + 8, y + 6, 56, 32)
-        # a gavel at the top-right, and the charge count from the dek
-        d.rectangle([x + w - 40, y + 8, x + w - 12, y + 16], fill=(90, 60, 30), outline=NAVY, width=1)
-        d.line([(x + w - 26, y + 16), (x + w - 14, y + 30)], fill=(90, 60, 30), width=3)
+        # a big gavel at the top-right, resting on its sound block, and
+        # the charge count from the dek
+        d.rectangle([x + w - 42, y + 6, x + w - 10, y + 16], fill=(110, 72, 36), outline=NAVY, width=1)
+        d.rectangle([x + w - 42, y + 6, x + w - 10, y + 9], fill=(160, 115, 70))
+        d.line([(x + w - 26, y + 16), (x + w - 14, y + 32)], fill=(90, 60, 30), width=3)
+        d.rectangle([x + w - 24, y + 30, x + w - 4, y + 35], fill=(90, 60, 30))
         d.rectangle([x + 8, y + h - 16, x + 78, y + h - 4], fill=(255, 255, 255), outline=NAVY, width=1)
         d.text((x + 12, y + h - 14), "5 CHARGES", font=font(SANSB, 8), fill=NAVY)
-        # the scales in front, brass with a bright rim and a soft shadow
-        d.ellipse([x + w - 58, y + h - 10, x + w - 30, y + h - 5], fill=(150, 135, 110))
+        # the scales in front, bigger brass pans with a bright rim
+        d.ellipse([x + w - 62, y + h - 10, x + w - 26, y + h - 5], fill=(150, 135, 110))
         d.line([x + w - 44, y + 8, x + w - 44, y + h - 10], fill=(90, 70, 40), width=3)
         d.line([x + w - 44, y + 8, x + w - 44, y + h - 10], fill=(200, 170, 100), width=1)
-        d.line([x + w - 72, y + 14, x + w - 16, y + 14], fill=(90, 70, 40), width=3)
-        d.polygon([(x + w - 80, y + 16), (x + w - 62, y + 16), (x + w - 71, y + 32)], fill=(200, 170, 100))
-        d.polygon([(x + w - 26, y + 16), (x + w - 8, y + 16), (x + w - 17, y + 32)], fill=(200, 170, 100))
-        d.rectangle([x + w - 58, y + h - 12, x + w - 30, y + h - 6], fill=(90, 70, 40))
+        d.line([x + w - 76, y + 14, x + w - 12, y + 14], fill=(90, 70, 40), width=3)
+        d.polygon([(x + w - 86, y + 16), (x + w - 64, y + 16), (x + w - 75, y + 34)], fill=(200, 170, 100))
+        d.polygon([(x + w - 24, y + 16), (x + w - 2, y + 16), (x + w - 13, y + 34)], fill=(200, 170, 100))
+        d.rectangle([x + w - 62, y + h - 12, x + w - 26, y + h - 6], fill=(90, 70, 40))
 
 # ---------- panels ----------
 # (num, category, colour, headline, dek, caption, pic, region)
@@ -574,7 +640,7 @@ PANELS = [
     (3, "ASIA · DIPLOMACY", CRIMSON, "Trump Takes the Quad to Manila",
      "Summit turns to critical minerals; Xi, Putin talks next.",
      "MANILA • PHILIPPINES", "summit"),
-    (4, "MIDDLE EAST · GAZA", CRIMSON, "Four Nations Demand Gaza Aid Open",
+    (4, "MIDDLE EAST · GAZA", CRIMSON, "Four Nations Demand Gaza Aid",
      "Britain, Australia, Canada, Italy urge crossings open.",
      "GAZA CROSSINGS", "truck"),
     (5, "ASIA · JAPAN", CRIMSON, "Japan Protests Airspace Breach",
@@ -632,7 +698,10 @@ def draw_panel(x, y, w, h, p, large):
     d.text((x + 10 + r - 3, cy + 2), str(num), font=font(SANSB, 11 if large else 10), fill=(255, 255, 255))
     d.text((x + 14 + 2 * r, cy + 2), cat, font=font(SANSB, 12 if large else 11), fill=col)
     hy = cy + 2 * r + 3
-    hf = font(SERIFB, 20 if large else 16)
+    # small-panel headlines at 14pt: at 16pt three headlines wrapped to
+    # 3 lines and the [:2] cut dropped their last word ("Open", "Aside",
+    # "House") — every headline must print in full
+    hf = font(SERIFB, 20 if large else 14)
     hlines = wrap(d, head, hf, w - 20)
     for i, ln in enumerate(hlines[:2]):
         d.text((x + 10, hy + i * (21 if large else 17)), ln, font=hf, fill=INK)
@@ -694,6 +763,11 @@ LAND = [
 ]
 for poly, lab, llo, lla in LAND:
     land(poly, lab, llo, lla)
+# ocean names on the open sea, in small blue-grey caps
+for olab, olon, olat in [("ATLANTIC", -42, 8), ("PACIFIC", -150, -12), ("INDIAN", 82, -38)]:
+    ox, oy = ll(olon, olat)
+    of = font(SANSB, 8)
+    d.text((ox - d.textlength(olab, font=of) / 2, oy - 4), olab, font=of, fill=(90, 120, 150))
 # numbered pins: (lon, lat, label dx, label dy) — clustered pins get a
 # leader line from their true spot to a spread-out numbered circle
 PINS = {1: (37, 45, 0, -34), 2: (50.5, 26, 40, -6), 3: (121, 14.5, 0, 0),
@@ -779,6 +853,8 @@ ALSO = [
     ("Apple:", " Pay, iCloud, App Store down; not a hack."),
 ]
 col_w = 296
+# a hairline between the two columns, like a newspaper index
+d.line([(lx + col_w + 8, by + 42), (lx + col_w + 8, by + mh - 8)], fill=(200, 190, 165), width=1)
 for ci in range(2):
     items = ALSO[ci * 15:(ci + 1) * 15]
     cx = lx + 12 + ci * (col_w + 8)
